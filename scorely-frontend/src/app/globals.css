@@ -1,0 +1,165 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCORELY — Global styles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   This file does only three things:
+   1. Loads fonts
+   2. Defines CSS variables for the light and dark themes
+   3. Sets minimal base resets
+
+   Component styles live in src/components/ui/ as React variants.
+   Pages should NEVER add styles here.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Theme tokens ─────────────────────────────────────────── */
+
+:root {
+  /* Type stack */
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-display: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+
+  /* Radii (do not change here — change tokens.ts) */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Light theme (default) ────────────────────────────────── */
+
+:root,
+[data-theme="light"] {
+  --color-bg: #FAFAF7;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+  --color-surface-overlay: #F4F4F0;
+
+  --color-text: #0A0B0D;
+  --color-text-muted: #5C5F66;
+  --color-text-subtle: #8B8F96;
+
+  --color-border: #E8E8E3;
+  --color-border-strong: #D4D4CD;
+
+  --color-accent: #84CC16;          /* lime-500, slightly muted for light */
+  --color-accent-hover: #65A30D;    /* lime-600 */
+  --color-accent-soft: #ECFCCB;     /* lime-100 */
+  --color-accent-fg: #1A2E05;       /* lime-950 */
+
+  --color-success: #16A34A;
+  --color-success-soft: #DCFCE7;
+  --color-warning: #CA8A04;
+  --color-warning-soft: #FEF9C3;
+  --color-danger: #DC2626;
+  --color-danger-soft: #FEE2E2;
+  --color-info: #0284C7;
+  --color-info-soft: #E0F2FE;
+
+  --color-ring: #84CC16;
+
+  --shadow-accent: 0 0 0 1px rgba(132, 204, 22, 0.5), 0 4px 16px rgba(132, 204, 22, 0.15);
+}
+
+/* ─── Dark theme ───────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  --color-bg: #0A0B0D;             /* near-black, slight blue undertone */
+  --color-surface: #111316;         /* elevated panel */
+  --color-surface-elevated: #16191D; /* dropdowns, modals */
+  --color-surface-overlay: #1C1F24;  /* hover states */
+
+  --color-text: #F4F4F0;
+  --color-text-muted: #A1A6AE;
+  --color-text-subtle: #6B6F77;
+
+  --color-border: #1F232A;
+  --color-border-strong: #2A2F37;
+
+  --color-accent: #BEF264;          /* lime-300 — pops on dark */
+  --color-accent-hover: #D9F99D;    /* lime-200 */
+  --color-accent-soft: #1F2E0A;     /* dark lime tint */
+  --color-accent-fg: #0A0B0D;       /* near-black ON lime */
+
+  --color-success: #4ADE80;
+  --color-success-soft: #052E16;
+  --color-warning: #FBBF24;
+  --color-warning-soft: #422006;
+  --color-danger: #F87171;
+  --color-danger-soft: #450A0A;
+  --color-info: #38BDF8;
+  --color-info-soft: #0C2A3F;
+
+  --color-ring: #BEF264;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5), 0 16px 32px rgba(0, 0, 0, 0.4);
+  --shadow-accent: 0 0 0 1px rgba(190, 242, 100, 0.5), 0 4px 16px rgba(190, 242, 100, 0.15);
+}
+
+/* ─── Base resets ──────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* Tabular figures for all numeric displays */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Subtle grid pattern available as a background utility */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+/* Focus ring — used by Button, Input, etc */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar in dark mode */
+[data-theme="dark"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: var(--color-bg); }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 5px; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: var(--color-text-subtle); }
+
+/* No-flash theme load — see ThemeScript component */
+html.no-transitions *,
+html.no-transitions *::before,
+html.no-transitions *::after {
+  transition: none !important;
+}
