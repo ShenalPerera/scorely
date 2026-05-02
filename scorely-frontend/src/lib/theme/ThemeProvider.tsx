@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { THEME_COOKIE_NAME, parseThemeCookie } from "@/lib/theme/cookie";
 import type { Theme } from "@/lib/theme/tokens";
 
 interface ThemeContextValue {
@@ -18,7 +19,6 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const COOKIE_NAME = "scorely-theme";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
 function readSystemTheme(): "light" | "dark" {
@@ -43,7 +43,7 @@ function applyTheme(resolved: "light" | "dark") {
 }
 
 function setCookie(value: string) {
-  document.cookie = `${COOKIE_NAME}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+  document.cookie = `${THEME_COOKIE_NAME}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
 }
 
 interface ThemeProviderProps {
@@ -96,17 +96,4 @@ export function useTheme() {
     throw new Error("useTheme must be used inside <ThemeProvider>");
   }
   return ctx;
-}
-
-/**
- * Read theme from cookies on the server. Used in the root layout
- * to set the initial data-theme attribute before hydration so we
- * never render the wrong theme.
- */
-export function readThemeFromCookie(cookieHeader: string | undefined): Theme {
-  if (!cookieHeader) return "dark";
-  const match = cookieHeader.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
-  const value = match?.[1];
-  if (value === "light" || value === "dark" || value === "system") return value;
-  return "dark";
 }

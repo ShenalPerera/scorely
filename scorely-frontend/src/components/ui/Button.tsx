@@ -4,7 +4,7 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils/cn";
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   // Base — applied to every variant
   [
     "inline-flex items-center justify-center gap-2",
