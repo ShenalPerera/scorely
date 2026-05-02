@@ -9,3 +9,6 @@ build/
 .DS_Store
 .vscode/
 next-env.d.ts
+BUILD-PROMPT.md
+CONTEXT.md
+HOW-TO-USE.md
