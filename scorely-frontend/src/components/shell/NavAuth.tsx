@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { buttonVariants } from '@/components/ui/Button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { cn } from '@/lib/utils/cn'
 import { UserMenuButton } from './UserMenuButton'
 
