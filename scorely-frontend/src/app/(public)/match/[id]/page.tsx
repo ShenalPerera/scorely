@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { Container, Section, PageHeader } from '@/components/shell'
-import { LiveEventLog } from '@/components/match'
+import { SpectatorView } from '@/components/match'
 import { createClient } from '@/lib/supabase/server'
 import { getSportPlugin } from '@/sports/registry'
 import type { Match, SportEvent } from '@/sports/_types'
@@ -51,8 +51,6 @@ export default async function SpectatorMatchPage({ params }: SpectatorMatchPageP
     created_at: e.created_at as string | undefined,
   }))
 
-  const { ScoreDisplay } = plugin
-
   return (
     <>
       <Section spacing="lg">
@@ -65,12 +63,7 @@ export default async function SpectatorMatchPage({ params }: SpectatorMatchPageP
       </Section>
       <Section>
         <Container width="md">
-          <ScoreDisplay match={match} events={events} />
-        </Container>
-      </Section>
-      <Section>
-        <Container width="md">
-          <LiveEventLog match={match} initialEvents={events} />
+          <SpectatorView match={match} initialEvents={events} />
         </Container>
       </Section>
     </>
