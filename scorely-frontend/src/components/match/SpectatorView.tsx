@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { getSportPlugin } from '@/sports/registry'
+import { Notice } from '@/components/ui'
 import { LiveEventLog, type ConnectionStatus } from './LiveEventLog'
 import type { Match, SportEvent } from '@/sports/_types'
 
@@ -63,6 +64,12 @@ export function SpectatorView({ match, initialEvents }: SpectatorViewProps) {
 
   return (
     <div className="flex flex-col gap-10">
+      {connectionStatus === 'disconnected' && (
+        <Notice tone="warning">
+          Live updates paused — connection lost. Refresh the page to reconnect.
+        </Notice>
+      )}
+
       {/* ScoreDisplay receives the same live events array — updates on every new event */}
       <ScoreDisplay match={match} events={events} />
 

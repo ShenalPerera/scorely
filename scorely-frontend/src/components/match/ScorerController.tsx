@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { getSportPlugin } from '@/sports/registry'
+import { Notice } from '@/components/ui'
 import type { Match, SportEvent, ScorerPadProps } from '@/sports/_types'
+import type { ConnectionStatus } from './LiveEventLog'
 
 interface ScorerControllerProps {
   match: Match
@@ -13,6 +15,7 @@ interface ScorerControllerProps {
 
 export function ScorerController({ match, initialEvents, userId }: ScorerControllerProps) {
   const [events, setEvents] = useState<SportEvent[]>(initialEvents)
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting')
   const isAlreadyLive = useRef(match.status !== 'upcoming')
   const plugin = getSportPlugin(match.sport)
 
@@ -41,7 +44,6 @@ export function ScorerController({ match, initialEvents, userId }: ScorerControl
           }
           setEvents((prev) => {
             if (prev.some((e) => e.client_id === incoming.client_id)) {
-              // Promote optimistic entry: attach the real DB id
               return prev.map((e) =>
                 e.client_id === incoming.client_id ? { ...e, id: incoming.id } : e
               )
@@ -50,7 +52,10 @@ export function ScorerController({ match, initialEvents, userId }: ScorerControl
           })
         }
       )
-      .subscribe()
+      .subscribe((s) => {
+        if (s === 'SUBSCRIBED') setConnectionStatus('connected')
+        else if (s === 'CLOSED' || s === 'CHANNEL_ERROR') setConnectionStatus('disconnected')
+      })
 
     return () => {
       supabase.removeChannel(channel)
@@ -58,7 +63,6 @@ export function ScorerController({ match, initialEvents, userId }: ScorerControl
   }, [match.id])
 
   const handleAddEvent: ScorerPadProps['onAddEvent'] = async (partial) => {
-    const supabase = createClient()
     const clientId = partial.client_id ?? crypto.randomUUID()
     const sequence = events.reduce((max, e) => Math.max(max, e.sequence), 0) + 1
 
@@ -72,23 +76,27 @@ export function ScorerController({ match, initialEvents, userId }: ScorerControl
 
     setEvents((prev) => [...prev, optimistic].sort((a, b) => a.sequence - b.sequence))
 
-    const { error } = await supabase.from('events').insert({
-      client_id: clientId,
-      match_id: match.id,
-      sequence,
-      type: partial.type,
-      payload: partial.payload ?? {},
-      created_by: userId,
+    const res = await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: clientId,
+        match_id: match.id,
+        sequence,
+        type: partial.type,
+        payload: partial.payload ?? {},
+      }),
     })
 
-    if (error) {
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
       setEvents((prev) => prev.filter((e) => e.client_id !== clientId))
-      throw new Error(error.message)
+      throw new Error((data as { error?: string }).error ?? 'Failed to record event')
     }
 
-    // Flip match to live on first event (fire-and-forget; RLS guards non-creators)
     if (!isAlreadyLive.current) {
       isAlreadyLive.current = true
+      const supabase = createClient()
       supabase.from('matches').update({ status: 'live' }).eq('id', match.id)
     }
   }
@@ -116,11 +124,18 @@ export function ScorerController({ match, initialEvents, userId }: ScorerControl
   const { ScorerPad } = plugin
 
   return (
-    <ScorerPad
-      match={match}
-      events={events}
-      onAddEvent={handleAddEvent}
-      onUndo={handleUndo}
-    />
+    <div className="flex flex-col gap-4">
+      {connectionStatus === 'disconnected' && (
+        <Notice tone="warning">
+          Connection lost — changes will still save, but live sync is paused. Refresh to reconnect.
+        </Notice>
+      )}
+      <ScorerPad
+        match={match}
+        events={events}
+        onAddEvent={handleAddEvent}
+        onUndo={handleUndo}
+      />
+    </div>
   )
 }

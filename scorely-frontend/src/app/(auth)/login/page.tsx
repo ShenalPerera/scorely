@@ -1,15 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { AppShell, TopNav, Container, Section, PageHeader } from '@/components/shell'
 import { Button, Input, Notice, Divider } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
 
 type Mode = 'signin' | 'signup'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,6 +19,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
 
   const supabase = createClient()
+
+  useEffect(() => {
+    if (searchParams.get('error') === 'auth') {
+      setError('Authentication failed — please try again.')
+    }
+  }, [searchParams])
 
   async function handleGoogleSignIn() {
     setError(null)
@@ -114,5 +121,13 @@ export default function LoginPage() {
         </Section>
       </Container>
     </AppShell>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }
