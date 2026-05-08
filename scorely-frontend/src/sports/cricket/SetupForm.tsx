@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Input, Segmented } from '@/components/ui'
 import { CRICKET_FORMATS, CRICKET_DEFAULT_FORMAT } from './config'
 import type { SetupFormProps } from '@/sports/_types'

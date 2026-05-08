@@ -1,4 +1,5 @@
 export { LiveEventLog, type LiveEventLogProps, type ConnectionStatus } from './LiveEventLog'
 export { MatchCard } from './MatchCard'
 export { MatchListClient, type SportFilterOption } from './MatchListClient'
+export { ScorerController } from './ScorerController'
 export { SpectatorView } from './SpectatorView'
